@@ -33,8 +33,9 @@ function write_saturation_csv(sim_time::Float64, logs::Vector{ProcessingTimeLog}
 
     df_saturation.down_percent = zeros(size(df_saturation, 1))    # placeholder
     df_saturation.repair_percent = zeros(size(df_saturation, 1))  # placeholder
+    df_saturation.maint_percent = zeros(size(df_saturation, 1))  # placeholder
 
-    df_saturation.idle_percent = 100 .- df_saturation.processing_percent .- df_saturation.down_percent .- df_saturation.repair_percent
+    df_saturation.idle_percent = 100 .- df_saturation.processing_percent .- df_saturation.down_percent .- df_saturation.repair_percent .-df_saturation.maint_percent
 
     CSV.write(joinpath("output", "saturation.csv"), df_saturation)
 end
@@ -104,14 +105,14 @@ function plot_saturation()
     df = CSV.read(joinpath("output", "saturation.csv"), DataFrame)
     p = groupedbar(
         df.machine,
-        [df.idle_percent df.repair_percent df.down_percent df.processing_percent],
+        [df.idle_percent df.maint_percent df.repair_percent df.down_percent df.processing_percent],
         xlabel = "Machine",
         ylabel = "Percent (%)",
         title = "Resource Usage",
-        label = ["Idle" "Repair" "Down" "Working"],
+        label = ["Idle" "Maintenance" "Repair" "Down" "Working"],
         bar_position = :stack,
         legend = true,
-        color = [:gray90 :lightgoldenrod1 :tomato2 :palegreen2]
+        color = [:gray90 :lightskyblue2 :lightgoldenrod1 :tomato2 :palegreen2]
     )
     hline!(p, [100], color=:black, linestyle=:dash, label="100%")
     return p
@@ -124,7 +125,7 @@ function plot_queuelen_time()
     show_legend = length(machines) < 20
     for m in machines
         subdf = df[df.machine .== m, :]
-        Plots.plot!(plt, subdf.timestamp, subdf.queue_length, label = show_legend ? m : false)
+        Plots.plot!(plt, subdf.timestamp, subdf.queue_length, label = show_legend ? m : false, seriestype=:steppost, linewidth = 2.5)
     end
     return plt
 end
@@ -161,7 +162,9 @@ function plot_unitsinsystem()
         xlabel = "Time",
         ylabel = "Units in System",
         title = "Units in System Over Time",
-        legend = false
+        legend = false,
+        seriestype=:steppost,
+        linewidth = 2.5
     )
     return p
 end
