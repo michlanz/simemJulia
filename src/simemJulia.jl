@@ -15,12 +15,14 @@ println("Abbiamo importato, perdoni la lentezza")
 include("./simparameters.jl")
 include("./structures.jl")
 include("./output.jl")
+include("./prioritystore.jl")
 
 import .simparameters as SP
 using .contextstruct
 using .outputstruct
 using .postprocess
 using .showdash
+using .prioritystore
 
 export runprint
 #@resumable function machine_downtime!(env::Environment, machine::Machine)
@@ -53,7 +55,7 @@ end
         push!(monitor.events, ProcessLog(arrival_machine, client.code, client.id, "entering queue", machine.name))
         push!(dash.queue_len_log, QueueLenLog(arrival_machine, machine.name, length(machine.node.put_queue)+1)) 
         
-        @yield request(machine.node) #assegno qui la priotità: quella del lotto è data alla risorsa #TODO quale server del nodo sta usando? (pull request) 
+        @yield request(machine.node) 
         start_service_time = now(env)
         push!(monitor.events, ProcessLog(start_service_time, client.code, client.id, "starting service", machine.name))
         push!(dash.queue_time_log, QueueTimeLog(client.code, machine.name, start_service_time-arrival_machine))
