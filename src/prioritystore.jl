@@ -37,15 +37,15 @@ export PriorityStore
 
 #ora definiamo put!; do_put e do_get
 
-const PriorityStore = Store{N, T, DataStructures.PriorityQueue{N, StorePutKey{N, T}}} where {N, T<:Number}
-PriorityStore{N}(env::Environment; capacity=typemax(UInt)) where {N} = PriorityStore{N, UInt}(env; capacity)
+const PriorityStore{N, T} = Store{N, T, DataStructures.PriorityQueue{N, StorePutKey{N, T}}} where {N, T<:Number}
+PriorityStore{N}(env::Environment; capacity=typemax(UInt)) where {N} = PriorityStore{N, UInt}(env; capacity=capacity)
 
 macro callback(expr::Expr)
   expr.head !== :call && error("Expression is not a function call!")
   esc(:(append_callback($(expr.args...))))
 end
 
-function put!(sto::PriorityStore{N, T}, item::N; priority=zero(T)) where {N, T<:Number}
+function put!(sto::PriorityStore{N, T}, item::N; priority=typemax(T)) where {N, T<:Number}
   put_ev = Put(sto.env)
   sto.put_queue[put_ev] = StorePutKey{N, T}(sto.seid+=one(UInt), item, T(priority))
   @callback trigger_get(put_ev, sto)

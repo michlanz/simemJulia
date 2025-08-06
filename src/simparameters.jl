@@ -29,6 +29,6 @@ service_route = [2, 1, 3] #metto l'ordinamento
 #machine stuff
 machine_names = ["M1", "M2", "M3"] #TODO mettile in ordine alfabetico
 machine_capacities = [1, 3, 1]
-machine_services = [Exponential(0.5), Exponential(2), Exponential(0.5)]
+#machine_services = [Exponential(0.5), Exponential(2), Exponential(0.5)]
 
 end

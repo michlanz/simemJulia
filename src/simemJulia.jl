@@ -9,120 +9,233 @@ using ResumableFunctions
 using DataFrames
 using StatsPlots
 using CSV
+using Plots
 
 println("Abbiamo importato, perdoni la lentezza")
 
-include("./simparameters.jl")
-include("./structures.jl")
-include("./output.jl")
+#include("./simparameters.jl")
+#include("./structures.jl")
+#include("./output.jl")
 include("./prioritystore.jl")
 
-import .simparameters as SP
-using .contextstruct
-using .outputstruct
-using .postprocess
-using .showdash
+#import .simparameters as SP
+#using .contextstruct
+#using .outputstruct
+#using .postprocess
+#using .showdash
 using .prioritystore
+#lock(sto::PriorityStore{N, T}, item; priority=typemax(T)) where {N, T<:Number} = prioritystore.put!(sto, item; priority=priority)
 
-export runprint
-#@resumable function machine_downtime!(env::Environment, machine::Machine)
-#    while true
-#        @yield timeout(env, 10.0)
-#        @yield request(machine.node, machine.capacity)   # blocca tutti i server
-#        @yield timeout(env, 1.0)
-#        @yield unlock(machine.node, machine.capacity)
-#    end
-#end
+export faicose
 
-function generateClients(rng::StableRNG, num_clients::Int64, type_client::Vector{String}, dist_mix::Categorical, priority::Int64, route_clients::Vector{Vector{Int64}}, services::Vector{Vector{UnivariateDistribution}})
-    clients = Vector{Client}()
-    for i in 1:num_clients
-        sampled_index = rand(rng, dist_mix)
-        push!(clients, Client(i, type_client[sampled_index], priority, route_clients[sampled_index], services[sampled_index]))
+
+
+# ========== STRUTTURE =====================
+struct Station
+    name::Symbol
+    capacity::Int64
+    node::Union{Resource, PriorityStore}
+    machines::Vector{String}
+end
+
+mutable struct Client
+    id::Int64
+    priority::Int64
+    route::Vector{Station}
+    current_station::Int64
+    systemarrival::Float64
+    systemexit::Float64
+    enterqueue::Vector{Float64}
+    exitqueue::Vector{Float64}
+end
+
+function Client(id::Int64, priority::Int64, route::Vector{Station})::Client
+    return Client(id, priority, route, 1, NaN, NaN, [NaN for _ in route], [NaN for _ in route])
+end
+
+struct Log
+    timestamp::Float64
+    id_client::Int64
+    event::String
+    machine::String
+end
+
+# ========== COSTRUISCI OGGETTI =====================
+sim = Simulation()
+
+monitor = Vector{Log}()
+
+stationsnames = [:station1, :station2, :station3, :station4, :station5]
+stationscapacities = [1, 2, 1, 3, 1]
+
+stations = Vector{Station}()
+function buildstations(env::Environment, stationsnames::Vector{Symbol}, stationscapacities::Vector{Int64})
+    for i in 1:length(stationsnames)
+        if stationscapacities[i] == 1
+            push!(stations, Station(stationsnames[i], stationscapacities[i], Resource(env), ["S$(i)"]))
+        else
+            vectormachines = ["S$(i)M$(j)" for j in 1:stationscapacities[i]]
+            push!(stations, Station(stationsnames[i], stationscapacities[i], PriorityStore{Client}(sim), vectormachines))
+        end
+    end    
+end
+
+buildstations(sim, stationsnames, stationscapacities)
+
+clientnum = 10
+route = [stations[1], stations[2], stations[3], stations[4], stations[5]]
+clients = [Client(i, clientnum+1-i, route) for i in 1:clientnum]
+#ho specificato la funzione client nella struttura, l'inizializazione è implicita
+
+# ========== PROCESSI ==============================================================================================================================
+
+# 1. ARRIVI
+@resumable function arrivalsProcess(env::Environment, client::Client, arrival::Float64)
+    @yield timeout(env, arrival)
+    #TODO implementa un contatore di unità nel sistema
+    client.systemarrival = now(env)
+    push!(monitor, Log(now(env), client.id, "Ingresso", "Sistema"))
+    @process clientDispatcher(env, client)
+end
+
+# 2. DISPATCHER CLIENTE
+@resumable function clientDispatcher(env, client::Client)
+    while client.current_station <= length(client.route)
+    #forse farei anche i clienti che sono già in struttura mutabile con anche le colonne tempo di arrivo, tempo di uscita, cumulata lavorazioni (e cumulata attesa per sottrazione)
+        station = client.route[client.current_station]
+        push!(monitor, Log(now(env), client.id, "Arriva", string(station.name)))
+        client.enterqueue[client.current_station] = now(env)
+        if station.capacity == 1
+            @yield lock(station.node; priority=client.priority)
+            client.exitqueue[client.current_station] = now(env)
+            push!(monitor, Log(now(env), client.id, "Inizia", station.machines[1]))
+            @yield timeout(env, 1.0)
+            @yield unlock(station.node)
+            push!(monitor, Log(now(env), client.id, "Finisce", station.machines[1]))
+            client.current_station += 1
+        else
+            @yield prioritystore.put!(station.node, client; priority=client.priority)
+            break #breaka perche poi sara il server a richiamarlo per rifare il dispatch. serve il while per tante risorse consecutive
+            #il break esce dal while ma sta nella funzione, il return esce dalla funzione
+        end
     end
-    return clients
-end
-
-@resumable function processClient!(env::Environment, rng::StableRNG, t_a::Float64, client::Client, machines::Vector{Machine}, monitor::EventMonitor, dash::Dash, units_in_system::Vector{Int64})
-    @yield timeout(env, t_a) # client arrives
-    arrival_time = now(env) #la funzione sa da sola di non sovrascrivere i tempi perche ha dentro anche ID
-    units_in_system[1] += 1
-    push!(monitor.events, SystemLog(arrival_time, client.code, client.id, "arrival"))
-    push!(dash.units_in_system_log, UnitsInSystemLog(arrival_time, units_in_system[1]))
-
-    for (i, machine) in enumerate(machines)
-        arrival_machine = now(env)
-        push!(monitor.events, ProcessLog(arrival_machine, client.code, client.id, "entering queue", machine.name))
-        push!(dash.queue_len_log, QueueLenLog(arrival_machine, machine.name, length(machine.node.put_queue)+1)) 
-        
-        @yield request(machine.node) 
-        start_service_time = now(env)
-        push!(monitor.events, ProcessLog(start_service_time, client.code, client.id, "starting service", machine.name))
-        push!(dash.queue_time_log, QueueTimeLog(client.code, machine.name, start_service_time-arrival_machine))
-        push!(dash.queue_len_log, QueueLenLog(now(env), machine.name, length(machine.node.put_queue)))
-
-        @yield timeout(env, rand(rng, client.processing_time[i]))
-
-        @yield unlock(machine.node) #non ho mai blocking
-        push!(monitor.events, ProcessLog(now(env), client.code, client.id, "finishing service", machine.name))
-        push!(dash.processing_times_log, ProcessingTimeLog(client.code, machine.name, now(env) - start_service_time))
+    if client.current_station >= length(client.route)
+        #TODO implementa il contatore di unità nel sistema
+        client.systemexit = now(env)
+        push!(monitor, Log(now(env), client.id, "Uscita", "Sistema"))
     end
-    
-    units_in_system[1] -= 1
-    push!(monitor.events, SystemLog(now(env), client.code, client.id, "exiting"))
-    push!(dash.units_in_system_log, UnitsInSystemLog(now(env), units_in_system[1]))
-    push!(dash.makespan_log, MakespanLog(client.code, now(env)-arrival_time))
-
 end
 
-# setup and run simulation
-function setuprun()
-    sim = Simulation() # initialize simulation environment e per avere la struttura di risorse mi serve l'env e quindi uffa
-    arrival_time = 0.0
-    units_in_system = [0] # TODO forse fa errore amo
+# 3. SERVER DI STORE
+@resumable function storeServer(env, stidx, machineidx)
+    station = stations[stidx]
+    while true
+        client = @yield prioritystore.take!(station.node)
+        client.exitqueue[client.current_station] = now(env)
+        push!(monitor, Log(now(env), client.id, "Inizia", station.machines[machineidx]))
+        @yield timeout(env, 2.0)
+        push!(monitor, Log(now(env), client.id, "Finisce", station.machines[machineidx]))
+        client.current_station += 1
+        @process clientDispatcher(env, client)
+    end
+end
 
-    clients = generateClients(SP.rng, SP.num_clients, SP.type_client, SP.dist_mix, SP.priority, SP.route_clients, SP.services)
-    machines = [Machine(SP.machine_names[i], SP.machine_capacities[i], Resource(sim, SP.machine_capacities[i])) for i in eachindex(SP.machine_names)]
-    monitor = EventMonitor([])
-    dash = Dash(
-        [], #processing times
-        [QueueLenLog(0.0, m.name, 0) for m in machines], #queue len
-        [], #queue time
-        [UnitsInSystemLog(0.0, units_in_system[1])], #units in system
-        [] #makespan
-    ) 
-    
-    for client in clients
-        arrival_time += rand(SP.rng, SP.interarrival_time) #qui ci sarà da fare un po' di giochi con la generaizone e la disponibilità
-        @process processClient!(sim, SP.rng, arrival_time, client, machines[client.route], monitor, dash, units_in_system) #gli ordino già le macchine
+# ========== LANCIO PROCESSI =====================
+
+for (i, client) in enumerate(clients)
+    @process arrivalsProcess(sim, client, i * 0.25) #hp nome: initialize process
+end
+
+for (i, station) in enumerate(stations)
+    if station.capacity > 1
+        for machine in 1:station.capacity
+            @process storeServer(sim, i, machine)
+        end
+    end
+end
+
+function faicose()
+    println("SIAMO DENTRO WOOOO")
+    run(sim, 30)
+
+    # ========== PRINT MONITOR =====================
+
+    monitor .|> println
+    println()
+
+    df_clients = DataFrame(clients)
+    df_clients = select!(df_clients, Not(:route))
+    df_clients .|> println
+    println()
+
+    #df = DataFrame(monitor)
+    #println(eachrow(df))
+
+    # println("solo stazione 3")
+    # filter(x -> x.machine == "S3", monitor) .|> println
+    # print()
+    # 
+    # 
+    # println("solo stazione 4")
+    # filter(x -> contains(x.machine, "S4M"), monitor) .|> println
+    # print()
+
+
+    df = DataFrame(
+        timestamp = [m.timestamp for m in monitor],
+        id_client = [m.id_client for m in monitor],
+        machine = [m.machine for m in monitor],
+        event = [m.event for m in monitor]
+    )
+    sort!(df, [:machine, :timestamp])
+
+    intervals = DataFrame(machine=String[], client=Int[], priority=Int[], start=Float64[], finish=Float64[])
+
+    for m in unique(df.machine)
+        df_m = df[df.machine .== m, :]
+        for i in 1:2:(nrow(df_m)-1)
+            if df_m.event[i] == "Inizia" && df_m.event[i+1] == "Finisce"
+                client_id = df_m.id_client[i]
+                priority = clients[client_id].priority
+                push!(intervals, (m, client_id, priority, df_m.timestamp[i], df_m.timestamp[i+1]))
+            end
+        end
     end
 
-    run(sim) # QUESTA E' LA COSA CHE FA SIMULARE LA SIMULAZIONE!!!!!!!! !!!!!!! !!!! SIMULAZIONE QUI
+    machines = unique(intervals.machine)
+    clients_ids = unique(intervals.client)
+    id_map = Dict(id => i for (i, id) in enumerate(clients_ids))
+    palette = distinguishable_colors(length(clients_ids); dropseed=true)  # niente nero
 
-    println("Simulazione fatta amo")
+    # funzione per rettangolo
+    rect(w, h, x, y) = Shape(x .+ [0, w, w, 0], y .+ [0, 0, h, h])
 
-    write_monitor_csv("output/monitor.csv", monitor.events)
-    write_saturation_csv(monitor.events[end].timestamp, dash.processing_times_log, machines)
-    write_queuelen_csv(monitor.events[end].timestamp, dash.queue_len_log, machines)
-    write_queuetime_csv(dash.queue_time_log)
-    write_unitsinsystem_csv(dash.units_in_system_log)
-    write_makespan_csv(dash.makespan_log)
+    # crea shapes e colori
+    shapes = [
+        rect(row.finish - row.start, 0.8, row.start, findfirst(==(row.machine), machines) - 0.4)
+        for row in eachrow(intervals)
+    ]
+    colors = [palette[id_map[row.client]] for row in eachrow(intervals)]
 
-    println("Dati salvati baby")
+    # plot base
+    plot(shapes, c=permutedims(colors), legend=false,
+         yticks=(1:length(machines), machines),
+         xlabel="Time", ylabel="Machines", title="Client Processing Timeline",
+         size=(1000, 300))
+
+    # etichette centrali
+    for row in eachrow(intervals)
+        y = findfirst(==(row.machine), machines)
+        xmid = (row.start + row.finish) / 2
+        ymid = y
+        text_label = "job$(row.client) p$(row.priority)"
+        annotate!(xmid, ymid, text(text_label, 8, :white, :center))
+    end
+
+    display(current())
+    sleep(100)
+
 end
 
-function runprint()
-    println("Ora iniziamo")
-    setuprun()
-
-    p5 = plot_saturation()
-    p2 = plot_queuelen_time()
-    p3 = plot_queuelen_box()
-    p4 = plot_queuetime_box()
-    p1 = plot_unitsinsystem()
-    p6 = plot_makespan_box()
-
-    savefig(Plots.plot(p1, p2, p3, p4, p5, p6; grid=(2, 3), size=(2600, 1400), left_margin=15*Plots.mm, bottom_margin=15*Plots.mm), "output/dashfig.png")
-end
 
 end

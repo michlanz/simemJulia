@@ -74,9 +74,15 @@ module contextstruct
 using ..Distributions
 using ..ConcurrentSim
 
-export Client, Machine
+export Machine, Client
 
-#client structures
+struct Machine
+    name::String
+    capacity::Int64
+    node::Resource
+    #service_distribution::Exponential
+end
+
 mutable struct Client
     id::Int64
     code::String
@@ -85,12 +91,7 @@ mutable struct Client
     processing_time::Vector{UnivariateDistribution}
 end
 
-#machine structure and definition
-struct Machine
-    name::String
-    capacity::Int64
-    node::Resource
-    #service_distribution::Exponential
-end
+
+
 
 end
