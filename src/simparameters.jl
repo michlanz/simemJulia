@@ -1,11 +1,18 @@
 module simparameters
 
-using Distributions
-using StableRNGs
+using ..CSV
+using ..JSON3
+using ..StableRNGs
+using ..Distributions
 
 rng = StableRNG(123)
 
-num_clients = 30 # total number of clients generated
+#importare il JSON3
+#trasformarlo in df
+
+
+
+num_clients = 200 # clienti al mese
 type_client = ["A", "B"]
 production_mix = [0.3, 0.7]
 dist_mix = Categorical(production_mix)

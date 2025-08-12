@@ -2,24 +2,25 @@ module simemJulia
 
 println("Buongiorno Padrona")
 
-using Distributions
-using ConcurrentSim
 using StableRNGs
 using ResumableFunctions
+using CSV
+#using JSON3
+using Distributions
+using ConcurrentSim
 using DataFrames
 using StatsPlots
-using CSV
 using Plots
 
 println("Abbiamo importato, perdoni la lentezza")
 
 #include("./simparameters.jl")
-#include("./structures.jl")
+include("./structures.jl")
 #include("./output.jl")
 include("./prioritystore.jl")
 
 #import .simparameters as SP
-#using .contextstruct
+using .contextstruct
 #using .outputstruct
 #using .postprocess
 #using .showdash
@@ -31,27 +32,27 @@ export faicose
 
 
 # ========== STRUTTURE =====================
-struct Station
-    name::Symbol
-    capacity::Int64
-    node::Union{Resource, PriorityStore}
-    machines::Vector{String}
-end
-
-mutable struct Client
-    id::Int64
-    priority::Int64
-    route::Vector{Station}
-    current_station::Int64
-    systemarrival::Float64
-    systemexit::Float64
-    enterqueue::Vector{Float64}
-    exitqueue::Vector{Float64}
-end
-
-function Client(id::Int64, priority::Int64, route::Vector{Station})::Client
-    return Client(id, priority, route, 1, NaN, NaN, [NaN for _ in route], [NaN for _ in route])
-end
+## struct Station
+##     name::Symbol
+##     capacity::Int64
+##     node::Union{Resource, PriorityStore}
+##     machines::Vector{String}
+## end
+## 
+## mutable struct Client
+##     id::Int64
+##     priority::Int64
+##     route::Vector{Station}
+##     current_station::Int64
+##     systemarrival::Float64
+##     systemexit::Float64
+##     enterqueue::Vector{Float64}
+##     exitqueue::Vector{Float64}
+## end
+## 
+## function Client(id::Int64, priority::Int64, route::Vector{Station})::Client
+##     return Client(id, priority, route, 1, NaN, NaN, [NaN for _ in route], [NaN for _ in route])
+## end
 
 struct Log
     timestamp::Float64
@@ -69,23 +70,14 @@ stationsnames = [:station1, :station2, :station3, :station4, :station5]
 stationscapacities = [1, 2, 1, 3, 1]
 
 stations = Vector{Station}()
-function buildstations(env::Environment, stationsnames::Vector{Symbol}, stationscapacities::Vector{Int64})
-    for i in 1:length(stationsnames)
-        if stationscapacities[i] == 1
-            push!(stations, Station(stationsnames[i], stationscapacities[i], Resource(env), ["S$(i)"]))
-        else
-            vectormachines = ["S$(i)M$(j)" for j in 1:stationscapacities[i]]
-            push!(stations, Station(stationsnames[i], stationscapacities[i], PriorityStore{Client}(sim), vectormachines))
-        end
-    end    
-end
-
-buildstations(sim, stationsnames, stationscapacities)
+buildstations(stations, sim, stationsnames, stationscapacities)
 
 clientnum = 10
 route = [stations[1], stations[2], stations[3], stations[4], stations[5]]
 clients = [Client(i, clientnum+1-i, route) for i in 1:clientnum]
 #ho specificato la funzione client nella struttura, l'inizializazione è implicita
+
+
 
 # ========== PROCESSI ==============================================================================================================================
 
@@ -93,21 +85,25 @@ clients = [Client(i, clientnum+1-i, route) for i in 1:clientnum]
 @resumable function arrivalsProcess(env::Environment, client::Client, arrival::Float64)
     @yield timeout(env, arrival)
     #TODO implementa un contatore di unità nel sistema
-    client.systemarrival = now(env)
+    clientlogging(client, now(env), :systemarrival) #TODO chissa se va lol
+    #client.log.systemarrival = now(env)
     push!(monitor, Log(now(env), client.id, "Ingresso", "Sistema"))
     @process clientDispatcher(env, client)
 end
 
 # 2. DISPATCHER CLIENTE
-@resumable function clientDispatcher(env, client::Client)
+@resumable function clientDispatcher(env, client::Client) #clientlog::ClientLog
     while client.current_station <= length(client.route)
     #forse farei anche i clienti che sono già in struttura mutabile con anche le colonne tempo di arrivo, tempo di uscita, cumulata lavorazioni (e cumulata attesa per sottrazione)
         station = client.route[client.current_station]
         push!(monitor, Log(now(env), client.id, "Arriva", string(station.name)))
-        client.enterqueue[client.current_station] = now(env)
+        clientlogging(client, now(env), :enterqueue)
+        #client.log.enterqueue[client.current_station] = now(env)
+        #
         if station.capacity == 1
             @yield lock(station.node; priority=client.priority)
-            client.exitqueue[client.current_station] = now(env)
+            clientlogging(client, now(env), :exitqueue)
+            #client.log.exitqueue[client.current_station] = now(env)
             push!(monitor, Log(now(env), client.id, "Inizia", station.machines[1]))
             @yield timeout(env, 1.0)
             @yield unlock(station.node)
@@ -121,17 +117,21 @@ end
     end
     if client.current_station >= length(client.route)
         #TODO implementa il contatore di unità nel sistema
-        client.systemexit = now(env)
+        clientlogging(client, now(env), :systemexit)
+        #client.log.systemexit = now(env)
         push!(monitor, Log(now(env), client.id, "Uscita", "Sistema"))
     end
 end
+
+
 
 # 3. SERVER DI STORE
 @resumable function storeServer(env, stidx, machineidx)
     station = stations[stidx]
     while true
         client = @yield prioritystore.take!(station.node)
-        client.exitqueue[client.current_station] = now(env)
+        clientlogging(client, now(env), :exitqueue)
+        #client.log.exitqueue[client.current_station] = now(env)
         push!(monitor, Log(now(env), client.id, "Inizia", station.machines[machineidx]))
         @yield timeout(env, 2.0)
         push!(monitor, Log(now(env), client.id, "Finisce", station.machines[machineidx]))
@@ -160,13 +160,22 @@ function faicose()
 
     # ========== PRINT MONITOR =====================
 
+    println("Amo qui il monitor --------------------------------------------")
     monitor .|> println
     println()
 
+    
+    println("Amo qui i clienti --------------------------------------------")
     df_clients = DataFrame(clients)
     df_clients = select!(df_clients, Not(:route))
     df_clients .|> println
     println()
+
+    
+    println("Amo qui le macchine --------------------------------------------")
+    stations .|> println
+
+
 
     #df = DataFrame(monitor)
     #println(eachrow(df))
