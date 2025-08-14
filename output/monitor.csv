@@ -1,331 +1,171 @@
-logtype,timestamp,client_code,client_id,event,machine_name
-SystemLog,0.05521186361820806,A,1,arrival,
-ProcessLog,0.05521186361820806,A,1,entering queue,M3
-ProcessLog,0.05521186361820806,A,1,starting service,M3
-SystemLog,0.11168462837156243,B,2,arrival,
-ProcessLog,0.11168462837156243,B,2,entering queue,M2
-ProcessLog,0.11168462837156243,B,2,starting service,M2
-SystemLog,0.1608517956125819,B,3,arrival,
-ProcessLog,0.1608517956125819,B,3,entering queue,M2
-ProcessLog,0.1608517956125819,B,3,starting service,M2
-SystemLog,0.21822939864554733,A,4,arrival,
-ProcessLog,0.21822939864554733,A,4,entering queue,M3
-SystemLog,0.3038852771305311,B,5,arrival,
-ProcessLog,0.3038852771305311,B,5,entering queue,M2
-ProcessLog,0.3038852771305311,B,5,starting service,M2
-SystemLog,0.4966448512107531,B,6,arrival,
-ProcessLog,0.4966448512107531,B,6,entering queue,M2
-SystemLog,0.5680077929824879,B,7,arrival,
-ProcessLog,0.5680077929824879,B,7,entering queue,M2
-ProcessLog,0.5959059630657095,B,2,finishing service,M2
-ProcessLog,0.5959059630657095,B,2,entering queue,M3
-ProcessLog,0.5959059630657095,B,6,starting service,M2
-SystemLog,0.8123066645064896,B,8,arrival,
-ProcessLog,0.8123066645064896,B,8,entering queue,M2
-SystemLog,0.8579469641806033,B,9,arrival,
-ProcessLog,0.8579469641806033,B,9,entering queue,M2
-SystemLog,0.9471472882498067,B,10,arrival,
-ProcessLog,0.9471472882498067,B,10,entering queue,M2
-ProcessLog,1.1698921637326796,B,5,finishing service,M2
-ProcessLog,1.1698921637326796,B,5,entering queue,M3
-ProcessLog,1.1698921637326796,B,7,starting service,M2
-ProcessLog,1.179281186172395,B,6,finishing service,M2
-ProcessLog,1.179281186172395,B,6,entering queue,M3
-ProcessLog,1.179281186172395,B,8,starting service,M2
-SystemLog,1.1814811318199654,B,11,arrival,
-ProcessLog,1.1814811318199654,B,11,entering queue,M2
-SystemLog,1.3258518907286245,B,12,arrival,
-ProcessLog,1.3258518907286245,B,12,entering queue,M2
-SystemLog,1.362276882874403,B,13,arrival,
-ProcessLog,1.362276882874403,B,13,entering queue,M2
-ProcessLog,1.41174443227009,A,1,finishing service,M3
-ProcessLog,1.41174443227009,A,1,entering queue,M2
-ProcessLog,1.41174443227009,A,4,starting service,M3
-SystemLog,1.4878096735369417,B,14,arrival,
-ProcessLog,1.4878096735369417,B,14,entering queue,M2
-ProcessLog,1.5630595741741922,A,4,finishing service,M3
-ProcessLog,1.5630595741741922,A,4,entering queue,M2
-ProcessLog,1.5630595741741922,B,2,starting service,M3
-ProcessLog,1.5985624549975208,B,3,finishing service,M2
-ProcessLog,1.5985624549975208,B,3,entering queue,M3
-ProcessLog,1.5985624549975208,B,9,starting service,M2
-SystemLog,1.6387894773517822,B,15,arrival,
-ProcessLog,1.6387894773517822,B,15,entering queue,M2
-ProcessLog,1.6816881887047153,B,9,finishing service,M2
-ProcessLog,1.6816881887047153,B,9,entering queue,M3
-ProcessLog,1.6816881887047153,B,10,starting service,M2
-SystemLog,1.8197262521442368,B,16,arrival,
-ProcessLog,1.8197262521442368,B,16,entering queue,M2
-ProcessLog,1.879600501352773,B,8,finishing service,M2
-ProcessLog,1.879600501352773,B,8,entering queue,M3
-ProcessLog,1.879600501352773,B,11,starting service,M2
-SystemLog,1.996171298662397,B,17,arrival,
-ProcessLog,1.996171298662397,B,17,entering queue,M2
-SystemLog,2.075339510557178,B,18,arrival,
-ProcessLog,2.075339510557178,B,18,entering queue,M2
-ProcessLog,2.101446104995121,B,2,finishing service,M3
-ProcessLog,2.101446104995121,B,2,entering queue,M1
-ProcessLog,2.101446104995121,B,5,starting service,M3
-ProcessLog,2.101446104995121,B,2,starting service,M1
-ProcessLog,2.1901001814165975,B,2,finishing service,M1
-SystemLog,2.1901001814165975,B,2,exiting,
-SystemLog,2.218923494377767,A,19,arrival,
-ProcessLog,2.218923494377767,A,19,entering queue,M3
-ProcessLog,2.488077136884594,B,5,finishing service,M3
-ProcessLog,2.488077136884594,B,5,entering queue,M1
-ProcessLog,2.488077136884594,B,6,starting service,M3
-ProcessLog,2.488077136884594,B,5,starting service,M1
-ProcessLog,2.649458543128063,B,6,finishing service,M3
-ProcessLog,2.649458543128063,B,6,entering queue,M1
-ProcessLog,2.649458543128063,B,3,starting service,M3
-ProcessLog,2.672992303584283,B,5,finishing service,M1
-SystemLog,2.672992303584283,B,5,exiting,
-ProcessLog,2.672992303584283,B,6,starting service,M1
-ProcessLog,2.6791655088624022,B,6,finishing service,M1
-SystemLog,2.6791655088624022,B,6,exiting,
-SystemLog,2.862455803261183,A,20,arrival,
-ProcessLog,2.862455803261183,A,20,entering queue,M3
-SystemLog,3.028197648829476,B,21,arrival,
-ProcessLog,3.028197648829476,B,21,entering queue,M2
-SystemLog,3.1769777571422884,B,22,arrival,
-ProcessLog,3.1769777571422884,B,22,entering queue,M2
-SystemLog,3.204426749223882,B,23,arrival,
-ProcessLog,3.204426749223882,B,23,entering queue,M2
-SystemLog,3.3310113694148358,A,24,arrival,
-ProcessLog,3.3310113694148358,A,24,entering queue,M3
-ProcessLog,3.5061442586671,B,10,finishing service,M2
-ProcessLog,3.5061442586671,B,10,entering queue,M3
-ProcessLog,3.5061442586671,B,12,starting service,M2
-ProcessLog,3.5084845524363053,B,12,finishing service,M2
-ProcessLog,3.5084845524363053,B,12,entering queue,M3
-ProcessLog,3.5084845524363053,B,13,starting service,M2
-ProcessLog,3.756548661833248,B,3,finishing service,M3
-ProcessLog,3.756548661833248,B,3,entering queue,M1
-ProcessLog,3.756548661833248,B,9,starting service,M3
-ProcessLog,3.756548661833248,B,3,starting service,M1
-ProcessLog,3.7813849815889777,B,3,finishing service,M1
-SystemLog,3.7813849815889777,B,3,exiting,
-SystemLog,4.014435952322646,B,25,arrival,
-ProcessLog,4.014435952322646,B,25,entering queue,M2
-SystemLog,4.023544975836663,B,26,arrival,
-ProcessLog,4.023544975836663,B,26,entering queue,M2
-SystemLog,4.104207068707313,B,27,arrival,
-ProcessLog,4.104207068707313,B,27,entering queue,M2
-ProcessLog,4.154688127768237,B,9,finishing service,M3
-ProcessLog,4.154688127768237,B,9,entering queue,M1
-ProcessLog,4.154688127768237,B,8,starting service,M3
-ProcessLog,4.154688127768237,B,9,starting service,M1
-SystemLog,4.402791574528866,B,28,arrival,
-ProcessLog,4.402791574528866,B,28,entering queue,M2
-ProcessLog,4.402966169450595,B,9,finishing service,M1
-SystemLog,4.402966169450595,B,9,exiting,
-SystemLog,4.436914163347073,B,29,arrival,
-ProcessLog,4.436914163347073,B,29,entering queue,M2
-SystemLog,4.455979448937057,A,30,arrival,
-ProcessLog,4.455979448937057,A,30,entering queue,M3
-ProcessLog,4.651574362601813,B,7,finishing service,M2
-ProcessLog,4.651574362601813,B,7,entering queue,M3
-ProcessLog,4.651574362601813,A,1,starting service,M2
-ProcessLog,4.699349724452586,B,8,finishing service,M3
-ProcessLog,4.699349724452586,B,8,entering queue,M1
-ProcessLog,4.699349724452586,A,19,starting service,M3
-ProcessLog,4.699349724452586,B,8,starting service,M1
-ProcessLog,4.864501329414879,A,1,finishing service,M2
-ProcessLog,4.864501329414879,A,1,entering queue,M1
-ProcessLog,4.864501329414879,B,14,starting service,M2
-ProcessLog,4.907397783318996,B,14,finishing service,M2
-ProcessLog,4.907397783318996,B,14,entering queue,M3
-ProcessLog,4.907397783318996,A,4,starting service,M2
-ProcessLog,5.584298260687332,B,8,finishing service,M1
-SystemLog,5.584298260687332,B,8,exiting,
-ProcessLog,5.584298260687332,A,1,starting service,M1
-ProcessLog,5.635285492783485,B,13,finishing service,M2
-ProcessLog,5.635285492783485,B,13,entering queue,M3
-ProcessLog,5.635285492783485,B,15,starting service,M2
-ProcessLog,5.838222611844304,A,19,finishing service,M3
-ProcessLog,5.838222611844304,A,19,entering queue,M2
-ProcessLog,5.838222611844304,A,20,starting service,M3
-ProcessLog,5.896270990615372,A,1,finishing service,M1
-SystemLog,5.896270990615372,A,1,exiting,
-ProcessLog,5.945369028254099,A,20,finishing service,M3
-ProcessLog,5.945369028254099,A,20,entering queue,M2
-ProcessLog,5.945369028254099,A,24,starting service,M3
-ProcessLog,5.968539854777687,B,11,finishing service,M2
-ProcessLog,5.968539854777687,B,11,entering queue,M3
-ProcessLog,5.968539854777687,B,16,starting service,M2
-ProcessLog,6.11331626940455,A,4,finishing service,M2
-ProcessLog,6.11331626940455,A,4,entering queue,M1
-ProcessLog,6.11331626940455,B,17,starting service,M2
-ProcessLog,6.11331626940455,A,4,starting service,M1
-ProcessLog,6.496009040744846,B,15,finishing service,M2
-ProcessLog,6.496009040744846,B,15,entering queue,M3
-ProcessLog,6.496009040744846,B,18,starting service,M2
-ProcessLog,6.964869305538156,A,24,finishing service,M3
-ProcessLog,6.964869305538156,A,24,entering queue,M2
-ProcessLog,6.964869305538156,B,10,starting service,M3
-ProcessLog,6.989545354259008,A,4,finishing service,M1
-SystemLog,6.989545354259008,A,4,exiting,
-ProcessLog,7.119677800002135,B,17,finishing service,M2
-ProcessLog,7.119677800002135,B,17,entering queue,M3
-ProcessLog,7.119677800002135,B,21,starting service,M2
-ProcessLog,8.115703784278939,B,18,finishing service,M2
-ProcessLog,8.115703784278939,B,18,entering queue,M3
-ProcessLog,8.115703784278939,B,22,starting service,M2
-ProcessLog,8.281401878214941,B,10,finishing service,M3
-ProcessLog,8.281401878214941,B,10,entering queue,M1
-ProcessLog,8.281401878214941,B,12,starting service,M3
-ProcessLog,8.281401878214941,B,10,starting service,M1
-ProcessLog,8.635846463247992,B,10,finishing service,M1
-SystemLog,8.635846463247992,B,10,exiting,
-ProcessLog,8.70007219666654,B,12,finishing service,M3
-ProcessLog,8.70007219666654,B,12,entering queue,M1
-ProcessLog,8.70007219666654,A,30,starting service,M3
-ProcessLog,8.70007219666654,B,12,starting service,M1
-ProcessLog,8.79030050198788,B,21,finishing service,M2
-ProcessLog,8.79030050198788,B,21,entering queue,M3
-ProcessLog,8.79030050198788,B,23,starting service,M2
-ProcessLog,9.044644334257717,B,16,finishing service,M2
-ProcessLog,9.044644334257717,B,16,entering queue,M3
-ProcessLog,9.044644334257717,B,25,starting service,M2
-ProcessLog,9.120748732047918,A,30,finishing service,M3
-ProcessLog,9.120748732047918,A,30,entering queue,M2
-ProcessLog,9.120748732047918,B,7,starting service,M3
-ProcessLog,9.450890515523731,B,22,finishing service,M2
-ProcessLog,9.450890515523731,B,22,entering queue,M3
-ProcessLog,9.450890515523731,B,26,starting service,M2
-ProcessLog,9.486703840429861,B,23,finishing service,M2
-ProcessLog,9.486703840429861,B,23,entering queue,M3
-ProcessLog,9.486703840429861,B,27,starting service,M2
-ProcessLog,9.510330757104164,B,26,finishing service,M2
-ProcessLog,9.510330757104164,B,26,entering queue,M3
-ProcessLog,9.510330757104164,B,28,starting service,M2
-ProcessLog,9.836909564929043,B,7,finishing service,M3
-ProcessLog,9.836909564929043,B,7,entering queue,M1
-ProcessLog,9.836909564929043,B,14,starting service,M3
-ProcessLog,10.223381363165183,B,14,finishing service,M3
-ProcessLog,10.223381363165183,B,14,entering queue,M1
-ProcessLog,10.223381363165183,B,13,starting service,M3
-ProcessLog,10.615647408729043,B,12,finishing service,M1
-SystemLog,10.615647408729043,B,12,exiting,
-ProcessLog,10.615647408729043,B,7,starting service,M1
-ProcessLog,10.912104456215335,B,13,finishing service,M3
-ProcessLog,10.912104456215335,B,13,entering queue,M1
-ProcessLog,10.912104456215335,B,11,starting service,M3
-ProcessLog,10.977039403869279,B,11,finishing service,M3
-ProcessLog,10.977039403869279,B,11,entering queue,M1
-ProcessLog,10.977039403869279,B,15,starting service,M3
-ProcessLog,11.152630436836453,B,15,finishing service,M3
-ProcessLog,11.152630436836453,B,15,entering queue,M1
-ProcessLog,11.152630436836453,B,17,starting service,M3
-ProcessLog,11.17748693014002,B,7,finishing service,M1
-SystemLog,11.17748693014002,B,7,exiting,
-ProcessLog,11.17748693014002,B,14,starting service,M1
-ProcessLog,11.78856347801036,B,17,finishing service,M3
-ProcessLog,11.78856347801036,B,17,entering queue,M1
-ProcessLog,11.78856347801036,B,18,starting service,M3
-ProcessLog,11.79151384344249,B,18,finishing service,M3
-ProcessLog,11.79151384344249,B,18,entering queue,M1
-ProcessLog,11.79151384344249,B,21,starting service,M3
-ProcessLog,11.791548938388862,B,14,finishing service,M1
-SystemLog,11.791548938388862,B,14,exiting,
-ProcessLog,11.791548938388862,B,13,starting service,M1
-ProcessLog,11.794644931302718,B,21,finishing service,M3
-ProcessLog,11.794644931302718,B,21,entering queue,M1
-ProcessLog,11.794644931302718,B,16,starting service,M3
-ProcessLog,12.079492735495505,B,25,finishing service,M2
-ProcessLog,12.079492735495505,B,25,entering queue,M3
-ProcessLog,12.079492735495505,B,29,starting service,M2
-ProcessLog,12.101243821585228,B,28,finishing service,M2
-ProcessLog,12.101243821585228,B,28,entering queue,M3
-ProcessLog,12.101243821585228,A,19,starting service,M2
-ProcessLog,12.168701233016197,B,29,finishing service,M2
-ProcessLog,12.168701233016197,B,29,entering queue,M3
-ProcessLog,12.168701233016197,A,20,starting service,M2
-ProcessLog,12.328404531135941,B,13,finishing service,M1
-SystemLog,12.328404531135941,B,13,exiting,
-ProcessLog,12.328404531135941,B,11,starting service,M1
-ProcessLog,12.358938907174414,B,11,finishing service,M1
-SystemLog,12.358938907174414,B,11,exiting,
-ProcessLog,12.358938907174414,B,15,starting service,M1
-ProcessLog,12.471466221210889,B,27,finishing service,M2
-ProcessLog,12.471466221210889,B,27,entering queue,M3
-ProcessLog,12.471466221210889,A,24,starting service,M2
-ProcessLog,12.738543620740508,B,15,finishing service,M1
-SystemLog,12.738543620740508,B,15,exiting,
-ProcessLog,12.738543620740508,B,17,starting service,M1
-ProcessLog,12.860693181641375,A,19,finishing service,M2
-ProcessLog,12.860693181641375,A,19,entering queue,M1
-ProcessLog,12.860693181641375,A,30,starting service,M2
-ProcessLog,13.115065899136088,B,16,finishing service,M3
-ProcessLog,13.115065899136088,B,16,entering queue,M1
-ProcessLog,13.115065899136088,B,22,starting service,M3
-ProcessLog,13.423262599679623,B,17,finishing service,M1
-SystemLog,13.423262599679623,B,17,exiting,
-ProcessLog,13.423262599679623,B,18,starting service,M1
-ProcessLog,13.776973969396845,A,24,finishing service,M2
-ProcessLog,13.776973969396845,A,24,entering queue,M1
-ProcessLog,13.947168379817757,B,18,finishing service,M1
-SystemLog,13.947168379817757,B,18,exiting,
-ProcessLog,13.947168379817757,B,21,starting service,M1
-ProcessLog,14.257354636355629,A,20,finishing service,M2
-ProcessLog,14.257354636355629,A,20,entering queue,M1
-ProcessLog,14.274614928186397,B,21,finishing service,M1
-SystemLog,14.274614928186397,B,21,exiting,
-ProcessLog,14.274614928186397,A,19,starting service,M1
-ProcessLog,14.405997658330586,A,19,finishing service,M1
-SystemLog,14.405997658330586,A,19,exiting,
-ProcessLog,14.405997658330586,B,16,starting service,M1
-ProcessLog,14.598024396579538,B,22,finishing service,M3
-ProcessLog,14.598024396579538,B,22,entering queue,M1
-ProcessLog,14.598024396579538,B,23,starting service,M3
-ProcessLog,14.720110933537827,B,23,finishing service,M3
-ProcessLog,14.720110933537827,B,23,entering queue,M1
-ProcessLog,14.720110933537827,B,26,starting service,M3
-ProcessLog,14.7793839261089,B,16,finishing service,M1
-SystemLog,14.7793839261089,B,16,exiting,
-ProcessLog,14.7793839261089,A,24,starting service,M1
-ProcessLog,15.214341738351008,A,24,finishing service,M1
-SystemLog,15.214341738351008,A,24,exiting,
-ProcessLog,15.214341738351008,A,20,starting service,M1
-ProcessLog,15.9299963584889,B,26,finishing service,M3
-ProcessLog,15.9299963584889,B,26,entering queue,M1
-ProcessLog,15.9299963584889,B,25,starting service,M3
-ProcessLog,16.066050079311754,A,20,finishing service,M1
-SystemLog,16.066050079311754,A,20,exiting,
-ProcessLog,16.066050079311754,B,22,starting service,M1
-ProcessLog,16.27387578409456,B,22,finishing service,M1
-SystemLog,16.27387578409456,B,22,exiting,
-ProcessLog,16.27387578409456,B,23,starting service,M1
-ProcessLog,16.401267630522504,B,23,finishing service,M1
-SystemLog,16.401267630522504,B,23,exiting,
-ProcessLog,16.401267630522504,B,26,starting service,M1
-ProcessLog,16.55634543763097,B,26,finishing service,M1
-SystemLog,16.55634543763097,B,26,exiting,
-ProcessLog,16.954634704377916,B,25,finishing service,M3
-ProcessLog,16.954634704377916,B,25,entering queue,M1
-ProcessLog,16.954634704377916,B,28,starting service,M3
-ProcessLog,16.954634704377916,B,25,starting service,M1
-ProcessLog,17.063024625589517,A,30,finishing service,M2
-ProcessLog,17.063024625589517,A,30,entering queue,M1
-ProcessLog,17.131065789480395,B,25,finishing service,M1
-SystemLog,17.131065789480395,B,25,exiting,
-ProcessLog,17.131065789480395,A,30,starting service,M1
-ProcessLog,17.19825228208477,A,30,finishing service,M1
-SystemLog,17.19825228208477,A,30,exiting,
-ProcessLog,18.090208593164824,B,28,finishing service,M3
-ProcessLog,18.090208593164824,B,28,entering queue,M1
-ProcessLog,18.090208593164824,B,29,starting service,M3
-ProcessLog,18.090208593164824,B,28,starting service,M1
-ProcessLog,18.860561423779252,B,28,finishing service,M1
-SystemLog,18.860561423779252,B,28,exiting,
-ProcessLog,19.640224647477748,B,29,finishing service,M3
-ProcessLog,19.640224647477748,B,29,entering queue,M1
-ProcessLog,19.640224647477748,B,27,starting service,M3
-ProcessLog,19.640224647477748,B,29,starting service,M1
-ProcessLog,19.654921554219353,B,29,finishing service,M1
-SystemLog,19.654921554219353,B,29,exiting,
-ProcessLog,19.8521912597747,B,27,finishing service,M3
-ProcessLog,19.8521912597747,B,27,entering queue,M1
-ProcessLog,19.8521912597747,B,27,starting service,M1
-ProcessLog,21.077967922835345,B,27,finishing service,M1
-SystemLog,21.077967922835345,B,27,exiting,
+timestamp,id_client,code,event,place
+0.0,1,TEMP,systemarrival,System
+0.0,2,TEMP,systemarrival,System
+0.0,3,TEMP,systemarrival,System
+0.0,4,TEMP,systemarrival,System
+0.0,5,TEMP,systemarrival,System
+0.0,6,TEMP,systemarrival,System
+0.0,7,TEMP,systemarrival,System
+0.0,8,TEMP,systemarrival,System
+0.0,9,TEMP,systemarrival,System
+0.0,10,TEMP,systemarrival,System
+0.0,1,TEMP,enterqueue,station1
+0.0,2,TEMP,enterqueue,station1
+0.0,3,TEMP,enterqueue,station1
+0.0,4,TEMP,enterqueue,station1
+0.0,5,TEMP,enterqueue,station1
+0.0,6,TEMP,enterqueue,station1
+0.0,7,TEMP,enterqueue,station1
+0.0,8,TEMP,enterqueue,station1
+0.0,9,TEMP,enterqueue,station1
+0.0,10,TEMP,enterqueue,station1
+0.0,1,TEMP,startprocess,S1
+1.0,1,TEMP,finishprocess,S1
+1.0,1,TEMP,enterqueue,station3
+1.0,10,TEMP,startprocess,S1
+1.0,1,TEMP,startprocess,S3
+2.0,10,TEMP,finishprocess,S1
+2.0,10,TEMP,enterqueue,station3
+2.0,9,TEMP,startprocess,S1
+3.0,9,TEMP,finishprocess,S1
+3.0,9,TEMP,enterqueue,station3
+3.0,8,TEMP,startprocess,S1
+4.0,8,TEMP,finishprocess,S1
+4.0,8,TEMP,enterqueue,station3
+4.0,7,TEMP,startprocess,S1
+5.0,1,TEMP,finishprocess,S3
+5.0,7,TEMP,finishprocess,S1
+5.0,7,TEMP,enterqueue,station3
+5.0,10,TEMP,startprocess,S3
+5.0,1,TEMP,enterqueue,station4
+5.0,6,TEMP,startprocess,S1
+5.0,1,TEMP,startprocess,S4M1
+6.0,6,TEMP,finishprocess,S1
+6.0,6,TEMP,enterqueue,station3
+6.0,5,TEMP,startprocess,S1
+7.0,5,TEMP,finishprocess,S1
+7.0,5,TEMP,enterqueue,station3
+7.0,4,TEMP,startprocess,S1
+8.0,4,TEMP,finishprocess,S1
+8.0,4,TEMP,enterqueue,station3
+8.0,3,TEMP,startprocess,S1
+9.0,10,TEMP,finishprocess,S3
+9.0,3,TEMP,finishprocess,S1
+9.0,3,TEMP,enterqueue,station3
+9.0,9,TEMP,startprocess,S3
+9.0,10,TEMP,enterqueue,station4
+9.0,2,TEMP,startprocess,S1
+9.0,10,TEMP,startprocess,S4M2
+10.0,2,TEMP,finishprocess,S1
+10.0,2,TEMP,enterqueue,station3
+13.0,1,TEMP,finishprocess,S4M1
+13.0,1,TEMP,enterqueue,station5
+13.0,9,TEMP,finishprocess,S3
+13.0,1,TEMP,startprocess,S5
+13.0,8,TEMP,startprocess,S3
+13.0,9,TEMP,enterqueue,station4
+13.0,9,TEMP,startprocess,S4M3
+17.0,10,TEMP,finishprocess,S4M2
+17.0,10,TEMP,enterqueue,station5
+17.0,8,TEMP,finishprocess,S3
+17.0,7,TEMP,startprocess,S3
+17.0,8,TEMP,enterqueue,station4
+17.0,8,TEMP,startprocess,S4M1
+19.0,1,TEMP,finishprocess,S5
+19.0,10,TEMP,startprocess,S5
+19.0,1,TEMP,enterqueue,station2
+19.0,1,TEMP,startprocess,S2M1
+21.0,9,TEMP,finishprocess,S4M3
+21.0,9,TEMP,enterqueue,station5
+21.0,7,TEMP,finishprocess,S3
+21.0,6,TEMP,startprocess,S3
+21.0,7,TEMP,enterqueue,station4
+21.0,7,TEMP,startprocess,S4M2
+25.0,8,TEMP,finishprocess,S4M1
+25.0,8,TEMP,enterqueue,station5
+25.0,10,TEMP,finishprocess,S5
+25.0,6,TEMP,finishprocess,S3
+25.0,9,TEMP,startprocess,S5
+25.0,10,TEMP,enterqueue,station2
+25.0,5,TEMP,startprocess,S3
+25.0,6,TEMP,enterqueue,station4
+25.0,10,TEMP,startprocess,S2M2
+25.0,6,TEMP,startprocess,S4M3
+26.0,1,TEMP,finishprocess,S2M1
+26.0,1,TEMP,systemexit,System
+29.0,7,TEMP,finishprocess,S4M2
+29.0,7,TEMP,enterqueue,station5
+29.0,5,TEMP,finishprocess,S3
+29.0,4,TEMP,startprocess,S3
+29.0,5,TEMP,enterqueue,station4
+29.0,5,TEMP,startprocess,S4M1
+31.0,9,TEMP,finishprocess,S5
+31.0,8,TEMP,startprocess,S5
+31.0,9,TEMP,enterqueue,station2
+31.0,9,TEMP,startprocess,S2M1
+32.0,10,TEMP,finishprocess,S2M2
+32.0,10,TEMP,systemexit,System
+33.0,6,TEMP,finishprocess,S4M3
+33.0,6,TEMP,enterqueue,station5
+33.0,4,TEMP,finishprocess,S3
+33.0,3,TEMP,startprocess,S3
+33.0,4,TEMP,enterqueue,station4
+33.0,4,TEMP,startprocess,S4M2
+37.0,5,TEMP,finishprocess,S4M1
+37.0,5,TEMP,enterqueue,station5
+37.0,8,TEMP,finishprocess,S5
+37.0,3,TEMP,finishprocess,S3
+37.0,7,TEMP,startprocess,S5
+37.0,8,TEMP,enterqueue,station2
+37.0,2,TEMP,startprocess,S3
+37.0,3,TEMP,enterqueue,station4
+37.0,8,TEMP,startprocess,S2M2
+37.0,3,TEMP,startprocess,S4M3
+38.0,9,TEMP,finishprocess,S2M1
+38.0,9,TEMP,systemexit,System
+41.0,4,TEMP,finishprocess,S4M2
+41.0,4,TEMP,enterqueue,station5
+41.0,2,TEMP,finishprocess,S3
+41.0,2,TEMP,enterqueue,station4
+41.0,2,TEMP,startprocess,S4M1
+43.0,7,TEMP,finishprocess,S5
+43.0,6,TEMP,startprocess,S5
+43.0,7,TEMP,enterqueue,station2
+43.0,7,TEMP,startprocess,S2M1
+44.0,8,TEMP,finishprocess,S2M2
+44.0,8,TEMP,systemexit,System
+45.0,3,TEMP,finishprocess,S4M3
+45.0,3,TEMP,enterqueue,station5
+49.0,2,TEMP,finishprocess,S4M1
+49.0,2,TEMP,enterqueue,station5
+49.0,6,TEMP,finishprocess,S5
+49.0,5,TEMP,startprocess,S5
+49.0,6,TEMP,enterqueue,station2
+49.0,6,TEMP,startprocess,S2M2
+50.0,7,TEMP,finishprocess,S2M1
+50.0,7,TEMP,systemexit,System
+55.0,5,TEMP,finishprocess,S5
+55.0,4,TEMP,startprocess,S5
+55.0,5,TEMP,enterqueue,station2
+55.0,5,TEMP,startprocess,S2M1
+56.0,6,TEMP,finishprocess,S2M2
+56.0,6,TEMP,systemexit,System
+61.0,4,TEMP,finishprocess,S5
+61.0,3,TEMP,startprocess,S5
+61.0,4,TEMP,enterqueue,station2
+61.0,4,TEMP,startprocess,S2M2
+62.0,5,TEMP,finishprocess,S2M1
+62.0,5,TEMP,systemexit,System
+67.0,3,TEMP,finishprocess,S5
+67.0,2,TEMP,startprocess,S5
+67.0,3,TEMP,enterqueue,station2
+67.0,3,TEMP,startprocess,S2M1
+68.0,4,TEMP,finishprocess,S2M2
+68.0,4,TEMP,systemexit,System
+73.0,2,TEMP,finishprocess,S5
+73.0,2,TEMP,enterqueue,station2
+73.0,2,TEMP,startprocess,S2M2
+74.0,3,TEMP,finishprocess,S2M1
+74.0,3,TEMP,systemexit,System
+80.0,2,TEMP,finishprocess,S2M2
+80.0,2,TEMP,systemexit,System
