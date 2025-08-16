@@ -95,7 +95,7 @@ function writecsvMakespan(logs::Vector{MakespanLog}, outpath::String)
 end
 
 
-function postprocessCSV(dash::Dash, outpath::String)
+function postprocessCSV(dash::Dash, outpath::String, clients::Vector{Client})
     println("##### ci apprestiamo a salvare i dati ######")
     mkpath(outpath)
     writecsvMonitor(dash.monitor_log, outpath)
@@ -106,6 +106,7 @@ function postprocessCSV(dash::Dash, outpath::String)
     writecsvMakespan(dash.makespan_log, outpath)
     println("##### salvataggio dei dati avvenuto ########")
     println()
+    CSV.write(joinpath(outpath, "clients.csv"), DataFrame(id = getfield.(clients, :id), code = getfield.(clients, :code), priority = getfield.(clients, :priority)))
 end
 
 end
@@ -120,6 +121,7 @@ using ..StatsPlots
 using ..Plots
 
 export plotresults,
+       plot_clients,
        plot_saturation,
        plot_queuelen_time,
        plot_queuelen_box,
@@ -127,6 +129,25 @@ export plotresults,
        plot_unitsinsystem,
        plot_makespan_box,
        closingprint
+
+       using CSV, DataFrames, Plots
+
+function plot_clients(outpath::String)
+    df = CSV.read(joinpath(outpath, "clients.csv"), DataFrame)
+    freq = combine(groupby(df, :code), nrow => :count)
+    sort!(freq, :count, rev=true)
+
+    codes   = String.(freq.code)
+    counts  = freq.count
+    labels  = ["$(codes[i]): $(counts[i])" for i in eachindex(codes)]
+    colors  = Plots.palette(:hawaii, length(codes))
+
+    p = StatsPlots.pie(labels, counts; color=colors, legend=:outerright,
+                       title="Clients per Code", size=(900, 700), legendfontsize=10)
+
+    return p
+end
+
 
 function plot_saturation(outpath::String)
     df = CSV.read(joinpath(outpath, "saturation.csv"), DataFrame)
@@ -211,9 +232,11 @@ end
 function plot_gantt(outpath::String)
     df = CSV.read(joinpath(outpath, "monitor.csv"), DataFrame)
     sort!(df, [:place, :timestamp])
+
+    # intervalli startfinish per ogni macchina
     intervals = DataFrame(machine=String[], client=Int[], code=String[], start=Float64[], finish=Float64[])
     for m in unique(df.place)
-        df_m = df[df.place .== m, :]
+        df_m = df[(df.place .== m) .& ((df.event .== "startprocess") .| (df.event .== "finishprocess")), :]
         i = 1
         while i <= nrow(df_m) - 1
             if df_m.event[i] == "startprocess" && df_m.event[i+1] == "finishprocess"
@@ -225,25 +248,37 @@ function plot_gantt(outpath::String)
         end
     end
 
+    # ordine clienti per primo ingresso nel sistema
+    arr = df[df.event .== "systemarrival", [:id_client, :timestamp]]
+    clients_order = unique(sort(arr, :timestamp).id_client)
 
-    clients_ids = unique(intervals.client)
-    base_palette = Plots.palette(:cool, clients_ids, rev = true)
-    id_map = Dict(id => i for (i, id) in enumerate(clients_ids))
+    # palette e mapping colori (mantengo :cool)
+    base_palette = Plots.palette(:cool, length(clients_order))
+    colors = [base_palette[findfirst(==(r.client), clients_order)] for r in eachrow(intervals)]
 
-    rect(w,h,x,y) = Shape(x .+ [0,w,w,0], y .+ [0,0,h,h])
+    # dimensioni adattive
+    sim_time = maximum(df.timestamp)
     machines = unique(intervals.machine)
+    nmachines = length(machines)
+    fig_w = round(37 * sim_time)
+    fig_h = round(70 * nmachines)
+    tfs  = round(2 * nmachines) # title font size
+    gfs  = round(1 * nmachines) # axes labels font size
+    lfs  = round(0.02 * nmachines) # label dentro i box
 
-    shapes = [rect(r.finish-r.start, 0.8, r.start, findfirst(==(r.machine), machines)-0.4) for r in eachrow(intervals)]
-    colors = [base_palette[mod1(id_map[r.client], length(base_palette))] for r in eachrow(intervals)]
+    # rettangoli
+    rect(w,h,x,y) = Shape(x .+ [0,w,w,0], y .+ [0,0,h,h])
+    shapes = [rect(r.finish - r.start, 0.8, r.start, findfirst(==(r.machine), machines) - 0.4) for r in eachrow(intervals)]
 
     p = plot(shapes, c=permutedims(colors), legend=false,
-             yticks=(1:length(machines), machines),
+             yticks=(1:nmachines, machines),
              xlabel="Time", ylabel="Machines", title="Client Processing Timeline",
-             size=(1000, 300))
+             size=(fig_w, fig_h),
+             titlefontsize=tfs, guidefontsize=gfs, tickfontsize=gfs)
 
     for r in eachrow(intervals)
         y = findfirst(==(r.machine), machines)
-        annotate!((r.start + r.finish) / 2, y, text("$(r.code)#$(r.client)", 8, :black, :center))
+        annotate!((r.start + r.finish) / 2, y, text("$(r.code).$(r.client)", lfs, :black, :center))
     end
 
     savefig(p, joinpath(outpath, "ganttfig.png"))
@@ -251,7 +286,8 @@ function plot_gantt(outpath::String)
 end
 
 
-function plotresults(outpath::String)#; monitor::Vector{SystemLog}; clients::Vector{Client})    
+
+function plotresults(outpath::String,)#; monitor::Vector{SystemLog}; clients::Vector{Client})    
     println("##### iniziando a plottare i grafici #######")
     p5 = plot_saturation(outpath)
     p2 = plot_queuelen_time(outpath)
@@ -261,6 +297,9 @@ function plotresults(outpath::String)#; monitor::Vector{SystemLog}; clients::Vec
     p6 = plot_makespan_box(outpath)
     plot_gantt(outpath)
     savefig(Plots.plot(p1, p2, p3, p4, p5, p6; grid=(2, 3), size=(2600, 1400), left_margin=15*Plots.mm, bottom_margin=15*Plots.mm), joinpath(outpath, "dashfig.png"))
+    pie = plot_clients(outpath)
+    savefig(pie, joinpath(outpath, "clients_pie.png"))
+    
     println("##### grafici e gantt salvati ##############")
 
 end

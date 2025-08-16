@@ -4,6 +4,7 @@ include("./prioritystore.jl")
 
 using ..Distributions
 using ..ConcurrentSim
+using ..StableRNGs
 
 using .prioritystore
 
@@ -18,6 +19,7 @@ export Dash,
        Client,
        AdvancementLog,
        buildstations,
+       generateClients,
        logging,
        init_dash
 
@@ -68,11 +70,12 @@ end
 
 # =======================================================================tutto il resto
 
-struct Station
+mutable struct Station
     name::String
     capacity::Int64
     node::Union{Resource, PriorityStore}
     machines::Vector{String}
+    notifier::Store{Nothing}
 end
 
 #FIXME potrei rimuovere systemexit, exitqueue e finishprocess
@@ -100,26 +103,38 @@ end
 # =================================================================== functions =======
 
 
-function buildstations(stat::Vector{Station}, env::Environment, stationsnames::Vector{String}, stationscapacities::Vector{Int64})
+function buildstations(env::Environment, stationsnames::Vector{String}, stationscapacities::Vector{Int64})
+    stats = Vector{Station}()
     for i in 1:length(stationsnames)
         if stationscapacities[i] == 1
-            push!(stat, Station(stationsnames[i], stationscapacities[i], Resource(env), ["S$(i)"]))
+            push!(stats, Station(stationsnames[i], stationscapacities[i], Resource(env), ["S$(i)"], Store{Nothing}(env)))
         else
             vectormachines = ["S$(i)M$(j)" for j in 1:stationscapacities[i]]
-            push!(stat, Station(stationsnames[i], stationscapacities[i], PriorityStore{Client}(env), vectormachines))
+            push!(stats, Station(stationsnames[i], stationscapacities[i], PriorityStore{Client}(env), vectormachines, Store{Nothing}(env)))
         end
-    end    
+    end
+    return stats
 end
 
 
 function AdvancementLog(code::String, n::Int64)::AdvancementLog
-    return AdvancementLog(code, NaN, NaN, fill(NaN, n), fill(NaN, n), fill(NaN, n), fill(NaN, n))
+    return AdvancementLog(code, NaN, NaN, [NaN for _ in 1:n], [NaN for _ in 1:n], [NaN for _ in 1:n], [NaN for _ in 1:n])
 end
 
 #TODO fixa il code
-function Client(id::Int64, priority::Int64, route::Vector{Station})::Client
-    code = "TEMP"
-    return Client(id, code, 200, priority, route, [1.0, 4.0, 8.0, 6.0, 7.0], 1, AdvancementLog(code, length(route)))
+function Client(id::Int64, code::String, lotsize::Int64, priority::Int64, route::Vector{Station}, processing_time::Vector{Float64})::Client
+    return Client(id, code, lotsize, priority, route, processing_time, 1, AdvancementLog(code, length(route)))
+end
+
+function generateClients(rng::StableRNG, clientnum::Int64, codesnames::Vector{String}, codesdistribution::Categorical, priority::Int64, codesroutestations::Vector{Vector{Station}}, codessizevalues::Vector{Vector{Int64}}, codessizedistributions::Vector{Categorical}, codesprocessingtimes::Vector{Vector{Float64}})
+    clients = Vector{Client}()
+    for i in 1:clientnum
+        sc = rand(rng, codesdistribution) #sampled code
+        ss = rand(rng, codessizedistributions[sc]) #sampled dimensions from the code's vector
+        lot = codessizevalues[sc][ss] #size of the lot
+        push!(clients, Client(i, codesnames[sc], lot, priority, codesroutestations[sc], codesprocessingtimes[sc].*lot))
+    end
+    return clients
 end
 
 function logging(event::Symbol, env::Environment, dash::Dash, client::Client, place::String, units::Int64)
@@ -131,10 +146,12 @@ function logging(event::Symbol, env::Environment, dash::Dash, client::Client, pl
         client.log.enterqueue[client.current_station] = now(env)
         push!(dash.monitor_log, SystemLog(now(env), client.id, client.code, event, place))
         push!(dash.queue_len_log, QueueLenLog(now(env), place, dash.queue_len_log[findlast(x -> x.station == place, dash.queue_len_log)].queue_length + 1))   
+        ConcurrentSim.put!(client.route[client.current_station].notifier, nothing)
     elseif event == :exitqueue
         client.log.exitqueue[client.current_station] = now(env)
         push!(dash.queue_time_log, QueueTimeLog(client.code, place, client.log.exitqueue[client.current_station]-client.log.enterqueue[client.current_station]))
         push!(dash.queue_len_log, QueueLenLog(now(env), place, dash.queue_len_log[findlast(x -> x.station == place, dash.queue_len_log)].queue_length - 1))
+        ConcurrentSim.put!(client.route[client.current_station].notifier, nothing)
     elseif event == :startprocess
         client.log.startprocess[client.current_station] = now(env)
         push!(dash.monitor_log, SystemLog(now(env), client.id, client.code, event, place))
