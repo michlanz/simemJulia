@@ -21,7 +21,8 @@ export Dash,
        buildstations,
        generateClients,
        logging,
-       init_dash
+       init_dash,
+       last_queue_len
 
 struct SystemLog
     timestamp::Float64
@@ -95,7 +96,7 @@ mutable struct Client
     lotsize::Int64
     priority::Int64 #anche vettore lungo come le macchine, vedi tu
     route::Vector{Station}
-    processing_time::Vector{Float64}
+    processing_time::Vector{Distributions.Normal{Float64}}
     current_station::Int64
     log::AdvancementLog
 end
@@ -121,8 +122,7 @@ function AdvancementLog(code::String, n::Int64)::AdvancementLog
     return AdvancementLog(code, NaN, NaN, [NaN for _ in 1:n], [NaN for _ in 1:n], [NaN for _ in 1:n], [NaN for _ in 1:n])
 end
 
-#TODO fixa il code
-function Client(id::Int64, code::String, lotsize::Int64, priority::Int64, route::Vector{Station}, processing_time::Vector{Float64})::Client
+function Client(id::Int64, code::String, lotsize::Int64, priority::Int64, route::Vector{Station}, processing_time::Vector{Distributions.Normal{Float64}})::Client
     return Client(id, code, lotsize, priority, route, processing_time, 1, AdvancementLog(code, length(route)))
 end
 
@@ -132,9 +132,14 @@ function generateClients(rng::StableRNG, clientnum::Int64, codesnames::Vector{St
         sc = rand(rng, codesdistribution) #sampled code
         ss = rand(rng, codessizedistributions[sc]) #sampled dimensions from the code's vector
         lot = codessizevalues[sc][ss] #size of the lot
-        push!(clients, Client(i, codesnames[sc], lot, priority, codesroutestations[sc], codesprocessingtimes[sc].*lot))
+        expectedtime = codesprocessingtimes[sc].*lot
+        sampledtime = [Normal(expectedtime[i], 0.1*expectedtime[i]) for i in eachindex(expectedtime)]
+        push!(clients, Client(i, codesnames[sc], lot, priority, codesroutestations[sc], sampledtime))
     end
     return clients
+
+    Normal()
+
 end
 
 function logging(event::Symbol, env::Environment, dash::Dash, client::Client, place::String, units::Int64)
@@ -177,6 +182,13 @@ function init_dash(stations::Vector{Station})
         MakespanLog[] #makespan_log
     )
 end
+
+last_queue_len(dash::Dash, station::Station) = dash.queue_len_log[findlast(x -> x.station == station.name, dash.queue_len_log)].queue_length
+
+
+
+
+
 
 end
 
