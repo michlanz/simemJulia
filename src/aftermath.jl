@@ -11,7 +11,7 @@ using PrettyTables
 
 include("./structures.jl")
 include("./output.jl")
-include("./simemjulia.jl")
+include("./simemJulia.jl")
 
 using .simemJulia
 using .showdash
