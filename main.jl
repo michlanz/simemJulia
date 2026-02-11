@@ -1,4 +1,4 @@
-include("src/simemjulia.jl")
+include("src/simemJulia.jl")
 
 using .simemJulia
 

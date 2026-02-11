@@ -14,7 +14,7 @@ export postprocessDF,
 # TODO buttaci dentro anche l'integrale di stocazzo sai magari con il cap e salva pure lui.
 # todo magari un vettore results o salvo in loco alla fine. esce funz lunghina ma sticazzi
 # tanto questo lo dovrò rifare sempre duh non lo so vedrò
-# memo che non l'hai ancora testato e puoi abbattere i writecsv onestamente (basta salvarli puri)
+# memo non puoi salvare i logger, tanto le funzioni sono fatte bene
 
 function postprocessDF(dashvector::Vector{Dash}, CLIENTNUM::Int64)
     CROWDLIMIT::Int64 = 5
