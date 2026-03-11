@@ -2,7 +2,7 @@ include("src/simemJulia.jl")
 
 using .simemJulia
 
-for i in 31:35
+for i in 1:50
     println("##### inizio simulazioni cap $(i) #############")
     capqueue = i
     runmanysim(capqueue)
