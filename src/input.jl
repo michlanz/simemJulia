@@ -9,7 +9,7 @@ using ..Distributions
 export CLIENTNUM, buildinput, setGate #RNG
 
 #RNG::StableRNG = StableRNG(666)
-CLIENTNUM = 200
+CLIENTNUM = 320
 
 #FIXME ci sara un modo intelligente di esportare gli input
 function buildinput(path::String, registry::String, matrix::String)

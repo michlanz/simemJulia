@@ -8,7 +8,7 @@ println("########                            ########")
 println("############################################")
 println()
 
-using StableRNGs
+using StableRNGs, Random
 using ResumableFunctions
 using CSV
 using JSON3
@@ -48,8 +48,11 @@ export runmanysim, savefigs, setGate
 PRIORITY = typemax(Int64) 
 #capqueue::Int64 = 4
 ARRIVALGATE::Bool = true
-REPETITIONS::Int64 = 35
+REPETITIONS::Int64 = 50
 
+master_seed = 42
+seeds_rng = StableRNG(master_seed)
+seeds = rand(seeds_rng, UInt32, REPETITIONS)
 
 inpath::String = "inputfile"
 registry::String = "code_registry_3route_5client_norm.json"
@@ -65,7 +68,7 @@ function runmanysim(capqueue::Int64)
         stations = buildstations(sim, stationsnames, stationscapacities)
         codesroutestations = [[stations[findfirst(x -> x.name == s, stations)] for s in r] for r in codesroute]
         dash = init_dash(stations)
-        rng = StableRNG(i*150)
+        rng = StableRNG(seeds[i])
         CAP::Int64 = setGate(ARRIVALGATE, capqueue)
         clients = generateClients(rng, CLIENTNUM, codesnames, codesdistribution, PRIORITY, codesroutestations, codessizevalues, codessizedistributions, codesprocessingtimes)
         push!(dashvector, onesimulation(i, sim, rng, stations, clients, dash, CAP)) #SIMULAZIONE QUI
